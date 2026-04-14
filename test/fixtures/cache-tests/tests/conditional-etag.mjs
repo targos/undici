@@ -30,6 +30,7 @@ export default {
     {
       name: 'HTTP cache must include `ETag` in a `304 Not Modified`',
       id: 'conditional-304-etag',
+      spec_anchors: ['freshening.responses'],
       depends_on: ['conditional-etag-strong-respond'],
       browser_skip: true,
       requests: [
@@ -53,6 +54,7 @@ export default {
     {
       name: 'HTTP cache must give precedence to `If-None-Match` over `If-Modified-Since`',
       id: 'conditional-etag-precedence',
+      spec_anchors: ['validation.received'],
       depends_on: ['conditional-etag-strong-respond'],
       browser_skip: true,
       requests: [
@@ -74,7 +76,7 @@ export default {
       ]
     },
     {
-      name: 'Does HTTP cache responds to `If-None-Match` with a `304` when holding a fresh response with a matching strong `ETag` containing obs-text?',
+      name: 'Does HTTP cache respond to `If-None-Match` with a `304` when holding a fresh response with a matching strong `ETag` containing obs-text?',
       id: 'conditional-etag-strong-respond-obs-text',
       kind: 'check',
       depends_on: ['conditional-etag-strong-respond'],
@@ -98,7 +100,7 @@ export default {
       ]
     },
     {
-      name: 'HTTP cache responds to unquoted `If-None-Match` with a `304` when holding a fresh response with a matching strong `ETag` that is quoted',
+      name: 'Does HTTP cache respond to an unquoted `If-None-Match` with a `304` when holding a fresh response with a matching strong `ETag` that is quoted?',
       id: 'conditional-etag-quoted-respond-unquoted',
       kind: 'check',
       depends_on: ['conditional-etag-strong-respond'],
@@ -119,7 +121,7 @@ export default {
       ]
     },
     {
-      name: 'HTTP cache responds to unquoted `If-None-Match` with a `304` when holding a fresh response with a matching strong `ETag` that is unquoted',
+      name: 'Does HTTP cache respond to an unquoted `If-None-Match` with a `304` when holding a fresh response with a matching strong `ETag` that is unquoted?',
       id: 'conditional-etag-unquoted-respond-unquoted',
       kind: 'check',
       depends_on: ['conditional-etag-strong-respond'],
@@ -140,7 +142,7 @@ export default {
       ]
     },
     {
-      name: 'HTTP cache responds to quoted `If-None-Match` with a `304` when holding a fresh response with a matching strong `ETag` that is unquoted',
+      name: 'Does HTTP cache respond to a quoted `If-None-Match` with a `304` when holding a fresh response with a matching strong `ETag` that is unquoted?',
       id: 'conditional-etag-unquoted-respond-quoted',
       kind: 'check',
       depends_on: ['conditional-etag-strong-respond'],
@@ -182,7 +184,7 @@ export default {
       ]
     },
     {
-      name: 'HTTP cache responds to `If-None-Match` with a `304` when holding a fresh response with a matching weak `ETag`, and the entity-tag weakness flag is lowercase',
+      name: 'Does HTTP cache respond to `If-None-Match` with a `304` when holding a fresh response with a matching weak `ETag`, and the entity-tag weakness flag is lowercase?',
       id: 'conditional-etag-weak-respond-lowercase',
       kind: 'check',
       depends_on: ['conditional-etag-weak-respond'],
@@ -203,7 +205,7 @@ export default {
       ]
     },
     {
-      name: 'HTTP cache responds to `If-None-Match` with a `304` when holding a fresh response with a matching weak `ETag`, and the entity-tag weakness flag uses `\\` instead of `/`',
+      name: 'Does HTTP cache respond to `If-None-Match` with a `304` when holding a fresh response with a matching weak `ETag`, and the entity-tag weakness flag uses `\\` instead of `/`?',
       id: 'conditional-etag-weak-respond-backslash',
       kind: 'check',
       depends_on: ['conditional-etag-weak-respond'],
@@ -224,7 +226,7 @@ export default {
       ]
     },
     {
-      name: 'HTTP cache responds to `If-None-Match` with a `304` when holding a fresh response with a matching weak `ETag`, and the entity-tag weakness flag omits `/`',
+      name: 'Does HTTP cache respond to `If-None-Match` with a `304` when holding a fresh response with a matching weak `ETag`, and the entity-tag weakness flag omits `/`?',
       id: 'conditional-etag-weak-respond-omit-slash',
       depends_on: ['conditional-etag-weak-respond'],
       kind: 'check',
@@ -310,6 +312,7 @@ export default {
     {
       name: 'HTTP cache must include stored response headers identified by `Vary` in a conditional request it generates',
       id: 'conditional-etag-vary-headers',
+      spec_anchors: ['validation.sent'],
       requests: [
         {
           request_headers: [
@@ -337,8 +340,10 @@ export default {
       ]
     },
     {
-      name: 'HTTP cache must not use a stored `ETag` to validate when the presented `Vary`ing request header differs',
+      name: 'Does HTTP cache use a stored `ETag` to validate when the presented `Vary`ing request header differs?',
       id: 'conditional-etag-vary-headers-mismatch',
+      kind: 'check',
+      spec_anchors: ['caching.negotiated.responses'],
       depends_on: ['conditional-etag-vary-headers', 'vary-no-match'],
       requests: [
         {
@@ -358,7 +363,7 @@ export default {
           request_headers: [
             ['Abc', '456']
           ],
-          expected_request_headers_missing: [
+          expected_request_headers: [
             ['If-None-Match', '"abcdef"']
           ]
         }

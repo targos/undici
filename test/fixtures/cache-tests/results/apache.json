@@ -100,7 +100,7 @@
   "cdn-date-update-exceed": true,
   "cdn-expires-update-exceed": [
     "Assertion",
-    "Response 2 header Expires is \"null\", not \"Tue, 09 Jul 2024 01:05:30 GMT\""
+    "Response 2 header Expires is \"null\", not \"Mon, 29 Dec 2025 00:24:15 GMT\""
   ],
   "cdn-fresh-cc-nostore": [
     "Assertion",
@@ -200,7 +200,10 @@
     "Response 2 does not come from cache"
   ],
   "conditional-etag-vary-headers": true,
-  "conditional-etag-vary-headers-mismatch": true,
+  "conditional-etag-vary-headers-mismatch": [
+    "Assertion",
+    "Request 2 header If-None-Match is \"undefined\", not \"\"abcdef\"\""
+  ],
   "conditional-etag-weak-generate-weak": true,
   "conditional-etag-weak-respond": true,
   "conditional-etag-weak-respond-backslash": [
@@ -423,6 +426,10 @@
   "heuristic-delta-60": true,
   "heuristic-delta-600": true,
   "heuristic-delta-86400": true,
+  "interim-102": true,
+  "interim-103": true,
+  "interim-no-header-reuse": true,
+  "interim-not-cached": true,
   "invalidate-DELETE": true,
   "invalidate-DELETE-cl": [
     "Assertion",
@@ -493,11 +500,11 @@
   "other-cookie": true,
   "other-date-update": [
     "Assertion",
-    "Response 2 header Date is \"Tue, 09 Jul 2024 01:05:24 GMT\", not \"Tue, 09 Jul 2024 01:05:21 GMT\""
+    "Response 2 header Date is \"Mon, 29 Dec 2025 00:24:09 GMT\", not \"Mon, 29 Dec 2025 00:24:06 GMT\""
   ],
   "other-date-update-expires": [
     "Assertion",
-    "Response 2 header Date is \"Tue, 09 Jul 2024 01:05:24 GMT\", not \"Tue, 09 Jul 2024 01:05:21 GMT\""
+    "Response 2 header Date is \"Mon, 29 Dec 2025 00:24:09 GMT\", not \"Mon, 29 Dec 2025 00:24:06 GMT\""
   ],
   "other-date-update-expires-update": true,
   "other-fresh-content-disposition-attachment": true,
@@ -545,27 +552,40 @@
   "query-args-different": true,
   "query-args-same": true,
   "stale-503": true,
-  "stale-close": true,
+  "stale-close": [
+    "TypeError",
+    "fetch failed"
+  ],
   "stale-close-must-revalidate": [
-    "Assertion",
-    "Response 2 comes from cache"
+    "TypeError",
+    "fetch failed"
   ],
   "stale-close-no-cache": [
-    "Assertion",
-    "Response 2 comes from cache"
+    "TypeError",
+    "fetch failed"
   ],
-  "stale-close-proxy-revalidate": [
-    "Assertion",
-    "Response 2 comes from cache"
+  "stale-close-proxy-revalidate": true,
+  "stale-close-s-maxage=2": [
+    "TypeError",
+    "fetch failed"
   ],
   "stale-close-s-maxage=2": [
-    "Assertion",
-    "Response 2 comes from cache"
+    "TypeError",
+    "fetch failed"
   ],
   "stale-sie-503": true,
-  "stale-sie-close": true,
-  "stale-warning-become": true,
-  "stale-warning-stored": true,
+  "stale-sie-close": [
+    "TypeError",
+    "fetch failed"
+  ],
+  "stale-warning-become": [
+    "TypeError",
+    "fetch failed"
+  ],
+  "stale-warning-stored": [
+    "TypeError",
+    "fetch failed"
+  ],
   "stale-while-revalidate": [
     "Assertion",
     "Response 2 does not come from cache"

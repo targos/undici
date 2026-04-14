@@ -4,68 +4,75 @@ export default [
     file: 'chrome.json',
     name: 'Chrome',
     type: 'browser',
-    version: '126.0.6478.127'
+    version: '143.0.7499.170'
   },
   {
     file: 'firefox.json',
     name: 'Firefox',
     type: 'browser',
-    version: '127.0.2',
+    version: '146.0.1',
     link: 'https://github.com/http-tests/cache-tests/wiki/Firefox'
   },
   {
     file: 'safari.json',
     name: 'Safari',
     type: 'browser',
-    version: 'Version 17.5 (19618.2.12.11.6)'
+    version: '26.2 (21623.1.14.11.9)'
   },
   {
     file: 'nginx.json',
     name: 'nginx',
     type: 'rev-proxy',
-    version: '1.26.0-1ubuntu2',
+    version: '1.28.0-6ubuntu1',
     link: 'https://github.com/http-tests/cache-tests/wiki/nginx'
   },
   {
     file: 'squid.json',
     name: 'Squid',
     type: 'rev-proxy',
-    version: '6.9-1ubuntu1',
+    version: '6.13-1ubuntu4.1',
     link: 'https://github.com/http-tests/cache-tests/wiki/Squid'
   },
   {
     file: 'trafficserver.json',
     name: 'ATS',
     type: 'rev-proxy',
-    version: '9.2.4+ds-2',
+    version: '9.2.5+ds-1ubuntu2',
     link: 'https://github.com/http-tests/cache-tests/wiki/Traffic-Server'
   },
   {
     file: 'apache.json',
     name: 'httpd',
     type: 'rev-proxy',
-    version: '2.4.59-2ubuntu2',
+    version: '2.4.64-1ubuntu3',
     link: 'https://github.com/http-tests/cache-tests/wiki/Apache-httpd'
   },
   {
     file: 'varnish.json',
     name: 'Varnish',
     type: 'rev-proxy',
-    version: '7.1.1-1.1ubuntu1',
+    version: '7.7.3-1',
     link: 'https://github.com/http-tests/cache-tests/wiki/Varnish'
   },
   {
     file: 'caddy.json',
     name: 'caddy',
     type: 'rev-proxy',
-    version: '0.7.0',
+    version: '0.16.0',
     link: 'https://github.com/http-tests/cache-tests/wiki/Caddy'
+  },
+  {
+    file: 'haproxy.json',
+    name: 'HAProxy',
+    type: 'rev-proxy',
+    version: '3.0.10-1ubuntu3',
+    link: 'https://github.com/http-tests/cache-tests/wiki/HAProxy'
   },
   {
     file: 'fastly.json',
     name: 'Fastly',
     type: 'cdn',
-    version: '2024-07-09',
+    version: '2025-12-29',
     link: 'https://github.com/http-tests/cache-tests/wiki/Fastly'
   }
 ]

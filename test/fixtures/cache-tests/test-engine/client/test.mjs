@@ -18,7 +18,7 @@ export async function makeTest (test) {
   const fetchFunctions = []
   for (let i = 0; i < requests.length; ++i) {
     fetchFunctions.push({
-      code: idx => {
+      code: async idx => {
         const reqConfig = requests[idx]
         const reqNum = idx + 1
         const url = clientUtils.makeTestUrl(uuid, reqConfig)
@@ -32,11 +32,20 @@ export async function makeTest (test) {
           controller.abort()
         }, config.requestTimeout * 1000)
         init.signal = controller.signal
+
+        const interimResponses = []
+        if ('expected_interim_responses' in reqConfig) {
+          // Dynamic import since undici is only available in Node.js
+          const undici = await import('undici')
+          const dispatcher = new undici.Agent().compose(clientUtils.interimResponsesCollectingInterceptor(interimResponses))
+          init.dispatcher = dispatcher
+        }
+
         if (test.dump === true) clientUtils.logRequest(url, init, reqNum)
-        return config.fetch(url, init)
+        return fetch(url, init)
           .then(response => {
             responses.push(response)
-            return checkResponse(test, requests, idx, response)
+            return checkResponse(test, requests, idx, response, interimResponses)
           })
           .finally(() => {
             clearTimeout(timeout)
@@ -61,6 +70,10 @@ export async function makeTest (test) {
     }
   }
 
+  function handleError (err) {
+    console.error(`ERROR: ${uuid} ${err.name} ${err.message}`)
+  }
+
   return clientUtils.putTestConfig(uuid, requests)
     .catch(handleError)
     .then(runNextStep)
@@ -80,11 +93,11 @@ export async function makeTest (test) {
     })
 }
 
-function checkResponse (test, requests, idx, response) {
+function checkResponse (test, requests, idx, response, interimResponses) {
   const reqNum = idx + 1
   const reqConfig = requests[idx]
   const resNum = parseInt(response.headers.get('Server-Request-Count'))
-  if (test.dump === true) clientUtils.logResponse(response, reqNum)
+  if (test.dump === true) clientUtils.logResponse(response, interimResponses, reqNum)
 
   // catch retries
   if (response.headers.has('Request-Numbers')) {
@@ -111,9 +124,11 @@ function checkResponse (test, requests, idx, response) {
 
   // check response status
   if ('expected_status' in reqConfig) {
-    assert(setupCheck(reqConfig, 'expected_status'),
-      response.status === reqConfig.expected_status,
-      `Response ${reqNum} status is ${response.status}, not ${reqConfig.expected_status}`)
+    if (reqConfig.expected_status !== null) {
+      assert(setupCheck(reqConfig, 'expected_status'),
+        response.status === reqConfig.expected_status,
+        `Response ${reqNum} status is ${response.status}, not ${reqConfig.expected_status}`)
+    }
   } else if ('response_status' in reqConfig) {
     assert(true, // response status is always setup
       response.status === reqConfig.response_status[0],
@@ -179,6 +194,37 @@ function checkResponse (test, requests, idx, response) {
       }
     })
   }
+
+  // check interim responses
+  if ('expected_interim_responses' in reqConfig) {
+    const isSetup = setupCheck(reqConfig, 'expected_interim_responses')
+
+    reqConfig.expected_interim_responses.forEach(([statusCode, headers = []], idx) => {
+      if (interimResponses[idx] == null) {
+        assert(isSetup, false, `Interim response ${idx + 1} not received`)
+      } else {
+        assert(isSetup, interimResponses[idx][0] === statusCode, `Interim response ${idx + 1} status is ${interimResponses[idx][0]}, not ${statusCode}`)
+
+        const receivedHeaders = interimResponses[idx][1]
+        headers.forEach(([header, value]) => {
+          if (typeof header === 'string') {
+            assert(isSetup, header in receivedHeaders,
+              `Interim response ${idx + 1} ${header} header not present.`)
+          } else if (header.length > 2) {
+            assert(isSetup, header in receivedHeaders,
+              `Interim response ${idx + 1} ${header} header not present.`)
+
+            const receivedValue = receivedHeaders[header]
+            assert(isSetup, value === receivedValue,
+              `Interim response ${idx + 1} header ${header} is ${receivedValue}, should ${value}`)
+          } else {
+            console.log('ERROR: Unknown header item in expected_interim_responses', header)
+          }
+        })
+      }
+    })
+  }
+
   return response.text().then(makeCheckResponseBody(test, reqConfig, response.status))
 }
 
@@ -292,8 +338,4 @@ function checkServerRequests (requests, responses, serverState) {
       )
     }
   }
-}
-
-function handleError (err) {
-  console.error(`ERROR: ${err}`)
 }
